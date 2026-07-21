@@ -41,6 +41,10 @@ The project will gradually evolve to provision resources such as:
 - Google Cloud CLI (`gcloud`)
 - A Google Cloud project
 - Application Default Credentials configured
+- Generate an SSH key pair:
+```bash
+  ssh-keygen -t ed25519 -f ~/.ssh/kefir
+```
 
 Authentication:
 

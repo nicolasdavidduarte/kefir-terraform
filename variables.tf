@@ -24,3 +24,11 @@ variable "subnet_name" {
   type        = string
   default     = "kefir-subnet"
 }
+
+variable "ssh_user" {
+  type = string
+}
+
+variable "public_key_path" {
+  type = string
+}

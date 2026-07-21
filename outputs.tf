@@ -17,3 +17,11 @@ output "static_ip" {
   description = "Reserved static IP"
   value       = google_compute_address.kefir.address
 }
+
+output "public_ip" {
+  value = google_compute_address.kefir.address
+}
+
+output "vm_name" {
+  value = google_compute_instance.kefir.name
+}

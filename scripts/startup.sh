@@ -1,0 +1,90 @@
+#!/bin/bash
+set -euxo pipefail
+
+apt-get update -y
+apt-get install -y ca-certificates curl gnupg openssl
+
+install -m 0755 -d /etc/apt/keyrings
+
+curl -fsSL https://download.docker.com/linux/debian/gpg \
+  | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+chmod a+r /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
+  $(. /etc/os-release && echo $VERSION_CODENAME) stable" \
+  | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+apt-get update -y
+
+apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+systemctl enable docker
+systemctl start docker
+
+mkdir -p /opt/kefir
+cd /opt/kefir
+
+JWT_SECRET=$(openssl rand -base64 32)
+
+cat > .env <<EOF
+JWT_SECRET=${JWT_SECRET}
+EOF
+
+chmod 600 .env
+
+cat > docker-compose.yml <<'EOF'
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: kefir-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: kefir
+      POSTGRES_USER: kefir
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - kefir-network
+
+  backend:
+    image: nduarte93/kefir-backend:latest
+    container_name: kefir-backend
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/kefir
+      SPRING_DATASOURCE_USERNAME: kefir
+      SPRING_DATASOURCE_PASSWORD: password
+      JWT_SECRET: ${JWT_SECRET}
+      FRONTEND_URL: "https://kefir.dedyn.io"
+      JAVA_OPTS: "-Xms512m -Xmx512m"
+
+    networks:
+      - kefir-network
+
+  frontend:
+    image: nduarte93/kefir-frontend:latest
+    container_name: kefir-frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - kefir-network
+
+volumes:
+  postgres_data:
+
+networks:
+  kefir-network:
+EOF
+
+docker compose up -d
