@@ -42,6 +42,24 @@ resource "google_compute_firewall" "allow_ssh" {
   target_tags = ["kefir-web"]
 }
 
+resource "google_compute_firewall" "allow_app" {
+  name    = "kefir-allow-test"
+  network = google_compute_network.kefir.self_link
+
+  direction = "INGRESS"
+  priority  = 1000
+
+  source_ranges = ["0.0.0.0/0"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["3000", "8080"]
+  }
+
+  target_tags = ["kefir-web"]
+
+}
+
 resource "google_service_account" "kefir" {
   account_id   = "kefir-vm-sa"
   display_name = "Kefir VM Service Account"

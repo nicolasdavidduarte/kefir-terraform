@@ -34,7 +34,10 @@ EOF
 
 chmod 600 .env
 
-cat > docker-compose.yml <<'EOF'
+PUBLIC_IP=$(curl -H "Metadata-Flavor: Google" \
+  http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip)
+
+cat > docker-compose.yml <<EOF
 services:
 
   postgres:
@@ -63,7 +66,7 @@ services:
       SPRING_DATASOURCE_USERNAME: kefir
       SPRING_DATASOURCE_PASSWORD: password
       JWT_SECRET: ${JWT_SECRET}
-      FRONTEND_URL: "https://kefir.dedyn.io"
+      FRONTEND_URL: "http://${PUBLIC_IP}:3000"
       JAVA_OPTS: "-Xms512m -Xmx512m"
 
     networks:
