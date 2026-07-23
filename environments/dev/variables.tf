@@ -6,29 +6,21 @@ variable "project_id" {
 variable "region" {
   description = "Default region"
   type        = string
+  default     = "us-central1"
 }
 
 variable "zone" {
   description = "Default zone"
   type        = string
-}
-
-variable "network_name" {
-  description = "Name of the VPC network"
-  type        = string
-  default     = "kefir-network"
-}
-
-variable "subnet_name" {
-  description = "Name of the subnet"
-  type        = string
-  default     = "kefir-subnet"
+  default     = "us-central1-a"
 }
 
 variable "ssh_user" {
-  type = string
+  description = "SSH username"
+  type        = string
 }
 
 variable "public_key_path" {
-  type = string
+  description = "Path to local public SSH key"
+  type        = string
 }
