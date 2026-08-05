@@ -1,6 +1,8 @@
 resource "google_compute_address" "static_ip" {
-  name   = "${var.instance_name}-ip"
-  region = var.region
+  name         = "${var.instance_name}-ip"
+  region       = var.region
+  address_type = "EXTERNAL"
+  network_tier = "STANDARD"
 }
 
 resource "google_compute_instance" "this" {
@@ -22,6 +24,7 @@ resource "google_compute_instance" "this" {
 
     access_config {
       nat_ip = google_compute_address.static_ip.address
+      network_tier = "STANDARD"
     }
   }
 

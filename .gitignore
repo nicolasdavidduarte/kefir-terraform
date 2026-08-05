@@ -47,6 +47,8 @@ terraform.rc
 terraform.tfstate
 terraform.tfstate.*
 terraform.tfvars
+*.tfplan
+tfplan
 
 # IntelliJ IDEA
 .idea/
