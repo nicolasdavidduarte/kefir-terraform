@@ -39,4 +39,6 @@ export SPRING_DATASOURCE_PASSWORD="$(gcloud secrets versions access latest --sec
 
 export JWT_SECRET="$(gcloud secrets versions access latest --secret=jwt-secret)"
 
+export FRONTEND_URL="http://${PUBLIC_IP}:3000"
+
 docker compose -f /opt/kefir/devops/docker/pd/docker-compose.yaml up -d
