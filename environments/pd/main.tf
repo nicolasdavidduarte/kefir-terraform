@@ -21,11 +21,6 @@ module "service_account" {
   display_name = "Kefir Prod VM Service Account"
 }
 
-resource "random_password" "db_password" {
-  length  = 16
-  special = false
-}
-
 module "compute" {
   source                = "../../modules/compute"
   instance_name         = "kefir-pd"
@@ -42,6 +37,6 @@ module "compute" {
   tags                  = ["kefir-web"]
 
   startup_script = templatefile("${path.module}/../../scripts/pd/startup.sh.tftpl", {
-    db_password = random_password.db_password.result
+    public_ip = module.compute.public_ip
   })
 }

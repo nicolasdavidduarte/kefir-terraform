@@ -6,13 +6,11 @@ variable "project_id" {
 variable "region" {
   description = "Default region"
   type        = string
-  default     = "us-central1"
 }
 
 variable "zone" {
   description = "Default zone"
   type        = string
-  default     = "us-central1-a"
 }
 
 variable "ssh_user" {
